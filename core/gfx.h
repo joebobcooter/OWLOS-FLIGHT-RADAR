@@ -24,10 +24,13 @@
  * glass, GFX_PL a length, GFX_UNZ a width on the glass back, rounded up. nothing at all but on
  * the 5" boards */
 #if GFX_SCALED
-#define GFX_Z(v)   (((v) * 3) >> 1)
-#define GFX_PX(v)  ((v) * 1.5f + 0.25f)
-#define GFX_PL(v)  ((v) * 1.5f)
-#define GFX_UNZ(v) (((v) * 2 + 2) / 3)
+/* GFX_SCALE_NUM / 2^GFX_SCALE_SHIFT glass pixels to a layout pixel (config.h): 3/2 on the 800x480
+ * boards, 9/4 on the Tab5. GFX_PX lands on the middle of the scaled pixel: + 0.25 at 3/2 */
+#define GFX_SCALE_F ((float)GFX_SCALE_NUM / (float)(1 << GFX_SCALE_SHIFT))
+#define GFX_Z(v)   (((v) * GFX_SCALE_NUM) >> GFX_SCALE_SHIFT)
+#define GFX_PX(v)  ((v) * GFX_SCALE_F + (GFX_SCALE_F - 1.0f) * 0.5f)
+#define GFX_PL(v)  ((v) * GFX_SCALE_F)
+#define GFX_UNZ(v) (((v) * (1 << GFX_SCALE_SHIFT) + GFX_SCALE_NUM - 1) / GFX_SCALE_NUM)
 #else
 #define GFX_Z(v)   (v)
 #define GFX_PX(v)  (v)

@@ -31,6 +31,11 @@ void        disp_wait_idle(void);
 /* DISP_HELPER boards (lcd_spi.c): the second core packs its strip under the next one
  * (disp_pack_under), then both go in one transfer (disp_strip2 with its rows); the DMA buffers
  * sized for that (rows = 2 * DISP_STRIP) or back (DISP_STRIP), 0: no memory */
+#if DISP_LCD_DSI
+/* the Tab5 (lcd_dsi.c): the board package's I2C bus and the power switches on its IO expanders,
+ * the radio's among them. before anything asks for the WiFi, from app_main */
+void        disp_board_up(void);
+#endif
 void        disp_pack_under(const canvas_t *under);
 void        disp_strip2(const canvas_t *cv, int under_rows);
 int         disp_rows(int rows);

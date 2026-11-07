@@ -1,0 +1,24 @@
+# the M5Stack Tab5 (main/board.h, lcd_dsi.c): read after sdkconfig.defaults. 16 MB of flash, 32 MB
+# of PSRAM, the frame and the map's picture in it. the chip in the one this was written on is a
+# P4 before production silicon (v1.3), hence the two lines that let the build run on it; they do
+# no harm on a newer one
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_16mb.csv"
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_360=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+# the console on the chip's USB: the board has no UART0 to speak of, and the UART driver waiting for
+# it held core 0 till the watchdog bit
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+# the board package: one frame, and the strips copied in by the CPU (no DMA2D), lcd_dsi.c
+CONFIG_BSP_LCD_DPI_BUFFER_NUMS=1
+# CONFIG_BSP_LCD_USE_DMA2D is not set
+# the WiFi: an ESP32-C6 on the board, reached over SDIO with ESP-Hosted, which knows this board:
+# the preset puts the bus on GPIO 8 to 13 and the C6's reset on 15. the C6 keeps the co-processor
+# firmware M5Stack shipped (1.4.1 as it reports itself), which this host talks to as it is
+CONFIG_ESP32P4_TAB5_C6_BOARD=y

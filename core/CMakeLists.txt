@@ -1,6 +1,6 @@
 # portable core as an IDF component. tools/preview builds the same files on PC with MSVC
 # the 5" boards (config.h GFX_SCALED) have the same fonts half as big again, and one more
-if(RADAR_DISPLAY EQUAL 10 OR RADAR_DISPLAY EQUAL 11)
+if(RADAR_DISPLAY EQUAL 10 OR RADAR_DISPLAY EQUAL 11 OR RADAR_DISPLAY EQUAL 12)
     set(FONTS "font_glass_small.c" "font_glass_medium.c" "font_glass_large.c" "font_glass_huge.c" "font_glass_tiny.c")
 else()
     set(FONTS "font_small.c" "font_medium.c" "font_large.c" "font_huge.c")

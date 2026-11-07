@@ -14,6 +14,7 @@
 #define DISPLAY_CROWADV28_320x240 9  // Elecrow CrowPanel Advance 2.8": ESP32-S3, ST7789 IPS, FT6336 touch
 #define DISPLAY_CROWADV50_800x480 10 // Elecrow CrowPanel Advance 5.0": ESP32-S3, RGB bus, GT911 touch
 #define DISPLAY_JC8048W550_800x480 11 // Guition JC8048W550 5": ESP32-S3, RGB bus, GT911 touch
+#define DISPLAY_TAB5_1280x720   12   // M5Stack Tab5 5": ESP32-P4, 720x1280 standing on MIPI-DSI, its touch, through Espressif's board package
 
 #ifndef RADAR_DISPLAY
 #define RADAR_DISPLAY DISPLAY_ILI9341_320x240
@@ -48,7 +49,22 @@
 #define GFX_PW 800
 #define GFX_PH 480
 #define GFX_SCALED 1
+#define GFX_SCALE_NUM 3              // the glass's pixels for one of the layout's: 3/2
+#define GFX_SCALE_SHIFT 1
 #define RADAR_RGB_BUS 1              // a frame in memory read out by the chip: its own byte order
+#elif RADAR_DISPLAY == DISPLAY_TAB5_1280x720
+/* the Tab5: the same layout 9/4 as big on a 1280x720 glass (the panel stands, 720x1280: the
+ * driver turns it, firmware/main/lcd_dsi.c). 569 and not 568: 1280 / 2.25 = 568.9, the half
+ * pixel past the edge is clipped. the fonts are the 5" boards' 3/2 ones for now, so the writing
+ * is two thirds of its size: a 9/4 bake of them is to come */
+#define GFX_W 569
+#define GFX_H 320
+#define GFX_PW 1280
+#define GFX_PH 720
+#define GFX_SCALED 1
+#define GFX_SCALE_NUM 9              // 9/4
+#define GFX_SCALE_SHIFT 2
+#define RADAR_RGB_BUS 1
 #else
 #error "unknown RADAR_DISPLAY, see config.h"
 #endif
@@ -108,6 +124,8 @@
 #define RADAR_BOARD "5\" CrowPanel Advance, S3"
 #elif RADAR_DISPLAY == DISPLAY_JC8048W550_800x480
 #define RADAR_BOARD "5\" Guition JC8048W550, S3"
+#elif RADAR_DISPLAY == DISPLAY_TAB5_1280x720
+#define RADAR_BOARD "5\" M5STACK TAB5, ESP32-P4"
 #else
 #define RADAR_BOARD "E-PAPER"
 #endif

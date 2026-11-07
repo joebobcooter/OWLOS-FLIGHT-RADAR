@@ -39,6 +39,7 @@ jobs:
           - { disp: crowadv28, num: 9, target: esp32s3 }
           - { disp: crowadv50, num: 10, target: esp32s3 }
           - { disp: jc8048w550, num: 11, target: esp32s3 }
+          - { disp: tab5, num: 12, target: esp32p4 }
     steps:
       - uses: actions/checkout@v4
 

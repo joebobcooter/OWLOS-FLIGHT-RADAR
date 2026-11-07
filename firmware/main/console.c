@@ -6,6 +6,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
+#include "sdkconfig.h"
 #include "soc/soc_caps.h"
 #include "board.h"
 #define CHIP_USB (SOC_USB_SERIAL_JTAG_SUPPORTED && !NO_CHIP_USB)   // the Guition 5" uses its pins for I2C
@@ -71,12 +72,19 @@ void console_start(console_line_fn fn)
 #if CHIP_USB
     xTaskCreate(usb_task, "console usb", 4096, NULL, 3, NULL);
 #endif
+#if CONFIG_ESP_CONSOLE_UART
     // the log keeps writing to UART0 as it always did, this only adds the receiving side
     if (uart_driver_install(UART_NUM_0, 2048, 0, 0, NULL, 0) != ESP_OK) {
         ESP_LOGE(TAG, "no UART driver: settings can't come from the site on UART0");
         return;
     }
     xTaskCreate(uart_task, "console", 4096, NULL, 3, NULL);
+#else
+    /* the log goes to the chip's USB alone (the P4: the Tab5). UART0 was never started, and the
+     * driver waiting for it to answer held the core till the watchdog bit */
+    (void)uart_task;
+    ESP_LOGI(TAG, "the console is the chip's USB alone");
+#endif
 }
 
 // finds "key": in a flat object and leaves p after the colon

@@ -11,8 +11,9 @@
  *   DISP_LCD_RGB   a frame in the PSRAM on the S3's 16-bit RGB bus (the 5" boards, lcd_rgb.c)
  *   DISP_ILI9486   raw SPI, every byte padded to 16 bits (RPi LCD with shift registers)
  *   DISP_EPD       SSD1683 e-paper, bit-banged, 1 bit a pixel (core/paper.c)
+ *   DISP_LCD_DSI   a frame in the PSRAM on the P4's MIPI-DSI, the panel standing (the Tab5, lcd_dsi.c)
  * touch: TOUCH_XPT_BITBANG, TOUCH_XPT_SPI (on the LCD bus), TOUCH_CST816, TOUCH_FT6336, TOUCH_GT911,
- * or none */
+ * TOUCH_BSP (the board package's, the Tab5), or none */
 
 #if RADAR_DISPLAY == DISPLAY_ILI9341_320x240
 /* ESP32-2432S028R "cheap yellow display". the one this was written on, all of it works */
@@ -269,6 +270,20 @@
 #define NO_CHIP_USB    1
 #define PIN_BUTTON     0        // BOOT
 
+#elif RADAR_DISPLAY == DISPLAY_TAB5_1280x720
+/* M5Stack Tab5: ESP32-P4 (16 MB flash, 32 MB PSRAM), a 5" 720x1280 IPS panel standing on MIPI-DSI,
+ * capacitive touch, Wi-Fi through an ESP32-C6 on SDIO (sdkconfig.defaults.esp32p4). three revisions
+ * of the panel exist (ILI9881C with a GT911, ST7123, ST7121 with its own touch): Espressif's board
+ * package (espressif/m5stack_tab5, main/idf_component.yml) tells them apart at power on and brings
+ * up the one it finds, so no panel or touch pins are named here, and the I2C bus is its. no BOOT
+ * button reaches the P4: the power button is the charger chip's. no LED. written on one with the
+ * ST7121 (board V1.0), lcd_dsi.c */
+#define DISP_LCD_DSI   1
+#define DISP_STRIP    12        // 60 strips: at 1280 wide the strip, its turned copy and the two cores' canvases have to share 346 KB of RAM
+#define DISP_HELPER   1
+#define TOUCH_BSP      1        // the package's esp_lcd_touch, whichever chip it found
+#define PIN_BUTTON    (-1)      // none
+
 #elif RADAR_DISPLAY == DISPLAY_EPD_400x300 || RADAR_DISPLAY == DISPLAY_EPD_792x272
 /* Elecrow CrowPanel e-paper 4.2" (400x300) and 5.79" (792x272), ESP32-S3. NOT run on
  * hardware yet: panel pins and command sequences are ViewOwl's (ViewOwl.ESP32_EPD.Client),
@@ -316,6 +331,8 @@
 #define TOUCH_RAW_SPAN 320      // it counts screen pixels, 240x320 standing
 #elif TOUCH_GT911
 #define TOUCH_RAW_SPAN GFX_PW   // so does this one, lying down
+#elif TOUCH_BSP
+#define TOUCH_RAW_SPAN GFX_PW   // the Tab5's counts the standing glass's pixels, 720 x 1280: the long way is the picture's width
 #else
 #define TOUCH_RAW_SPAN 3700
 #endif

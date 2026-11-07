@@ -5,6 +5,12 @@
 
 #define LONG_MS 700u            // long press
 
+#if PIN_BUTTON < 0
+/* the Tab5: nothing on a pin, its power button is the charger chip's */
+void button_init(void) { }
+int button_poll(uint32_t now) { (void)now; return BTN_NONE; }
+#else
+
 static int      s_down;
 static uint32_t s_since;
 static int      s_fired;
@@ -35,3 +41,4 @@ int button_poll(uint32_t now)
     s_down = down;
     return ev;
 }
+#endif

@@ -147,7 +147,7 @@ static void *iram_first(size_t bytes)
 {
 #if CONFIG_IDF_TARGET_ESP32
     return heap_caps_malloc(bytes, MALLOC_CAP_EXEC | MALLOC_CAP_32BIT);
-#elif DISP_LCD_RGB
+#elif DISP_LCD_RGB || DISP_LCD_DSI
     return heap_caps_malloc(bytes, MALLOC_CAP_SPIRAM);  // the 5": 190 KB, there is no such room in the RAM
 #else
     (void)bytes;
@@ -875,7 +875,7 @@ static void pick_screen(int screen, uint32_t now, const char *by)
  * turns with it, so it needs no new crosses */
 static void screen_flip(int on)
 {
-#if DISP_LCD_SPI || DISP_LCD_RGB || DISP_ILI9486
+#if DISP_LCD_SPI || DISP_LCD_RGB || DISP_LCD_DSI || DISP_ILI9486
     disp_flip(on);
 #endif
 #if RADAR_TOUCH_CAL
@@ -901,7 +901,7 @@ static void ui_task(void *arg)
     disp_profile(screen);
     s_screen = screen;
 #endif
-#if DISP_LCD_SPI || DISP_LCD_RGB || DISP_ILI9486
+#if DISP_LCD_SPI || DISP_LCD_RGB || DISP_LCD_DSI || DISP_ILI9486
     disp_flip(c.flip);
 #endif
     disp_init();
@@ -1134,7 +1134,7 @@ static void ui_task(void *arg)
             uint32_t f = frames ? frames : 1;
             ESP_LOGI(TAG, "%u fps, %u ms a frame, view %d, %d planes, heap %u", (unsigned)(frames * 1000u / (now - t_stat)),
                      (unsigned)(busy_us / 1000u / f), s_ui.view, s_ui.snap.n, (unsigned)heap_caps_get_free_size(MALLOC_CAP_8BIT));
-#if DISP_LCD_RGB
+#if DISP_LCD_RGB || DISP_LCD_DSI
             // the heap above counts the PSRAM too: what the WiFi and the second core want is this
             ESP_LOGI(TAG, "RAM %u free, %u in one piece, %u at the least", (unsigned)heap_caps_get_free_size(MALLOC_CAP_INTERNAL),
                      (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL), (unsigned)heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL));
@@ -1194,6 +1194,9 @@ void app_main(void)
     demo_init(&s_demo, range_km(&s_cfg), esp_random());
     tiles_init();
     map_mem = iram_first;
+#if DISP_LCD_DSI
+    disp_board_up();                                   // the Tab5: the radio's power switch, before the WiFi asks for it
+#endif
     net_start(&s_sec);                                 // up even without settings: a SET then just connects
     /* the TLS handshake runs on the fetch task, and the map is made there. one core (the C3): it
      * gets the screen's priority, the two take turns a tick each. under the screen it had less
