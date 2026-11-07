@@ -103,6 +103,10 @@
 /* the CYDs' red is on one of two pins and nothing tells which: the user picks (core/light.h) */
 #define RADAR_LED_RED_PIN (RADAR_DISPLAY == DISPLAY_ILI9341_320x240 || RADAR_DISPLAY == DISPLAY_ST7796_480x320)
 
+/* a BOOT button the firmware can read: every board but the Tab5, whose buttons go to its power
+ * chip and its C6, not the P4. the pages say what BOOT does only where there is one */
+#define RADAR_HAS_BUTTON (RADAR_DISPLAY != DISPLAY_TAB5_1280x720)
+
 #define RADAR_NAME "OWLOS FLIGHTS"
 
 /* the board, as ABOUT says it */

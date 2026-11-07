@@ -485,8 +485,11 @@ void cal_draw(ui_t *u, canvas_t *cv)
         char t5[48];
         snprintf(t5, sizeof t5, "NOW %s   HOLD BOOT: SKIP", ui_screen_name);
         micro_text(cv, GFX_W / 2 - micro_width(t5, 1) / 2, ty + 57, t5, C_QUIET, 230, 1);
-    } else {
+    }
+#if RADAR_HAS_BUTTON
+    else {
         const char *t4 = "BOOT BUTTON: SKIP";
         micro_text(cv, GFX_W / 2 - micro_width(t4, 1) / 2, ty + 48, t4, C_QUIET, 230, 1);
     }
+#endif
 }

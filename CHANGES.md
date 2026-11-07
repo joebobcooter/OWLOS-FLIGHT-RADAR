@@ -20,6 +20,8 @@ The site keeps the firmware of each version: a new number here keeps the one bef
   Guition JC8048W550, ESP32-S3 with an 800x480 screen on the RGB bus and capacitive touch. The same pages
   as on the 3.5", half as big again, in the screen's own pixels. Tell us how it goes.
 - Fixed: looking for WiFi networks on the screen could restart the ESP32-S3 boards.
+- The M5Stack Tab5: ESP32-P4, 720x1280 on MIPI-DSI, its WiFi on the C6 beside it. The 5" pages 9/4 as
+  big, turned by the P4's pixel engine. Run on a real one, with planes.
 
 ## 0.5
 
